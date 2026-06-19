@@ -47,6 +47,12 @@ const revenueOptions = [
 function handlePhoneInput(e: Event) {
   const input = e.target as HTMLInputElement
   let raw = input.value.replace(/\D/g, '')
+  
+  // If the number starts with '55' (country code) and has 12 or more digits (DDD + number), strip '55'
+  if (raw.startsWith('55') && raw.length >= 12) {
+    raw = raw.slice(2)
+  }
+  
   if (raw.length > 11) {
     raw = raw.slice(0, 11)
   }
