@@ -89,24 +89,6 @@ export const CATS: Category[] = [
           ['Raramente', 2],
           ['Nunca — todo contato é registrado', 3]
         ]
-      },
-      {
-        q: 'Vários atendentes conseguem usar o mesmo número ao mesmo tempo?',
-        o: [
-          ['Não, só uma pessoa por vez', 0],
-          ['Revezamos o mesmo aparelho', 1],
-          ['Parcialmente, com gambiarras', 2],
-          ['Sim, simultâneos e com histórico único', 3]
-        ]
-      },
-      {
-        q: 'Você vê todo o histórico de conversa de um cliente em um só lugar?',
-        o: [
-          ['Não, fica espalhado em vários celulares', 0],
-          ['Só no aparelho de quem atendeu', 1],
-          ['Em parte', 2],
-          ['Sim, centralizado e pesquisável', 3]
-        ]
       }
     ]
   },
@@ -145,24 +127,6 @@ export const CATS: Category[] = [
           ['Poucos', 2],
           ['Quase nenhum — o follow-up é garantido', 3]
         ]
-      },
-      {
-        q: 'Você consegue medir sua taxa de conversão (lead → venda)?',
-        o: [
-          ['Não tenho esse número', 0],
-          ['Estimo por alto', 1],
-          ['Calculo manualmente às vezes', 2],
-          ['Acompanho automaticamente em tempo real', 3]
-        ]
-      },
-      {
-        q: 'Quando um vendedor sai, o histórico dos leads dele se perde?',
-        o: [
-          ['Sim, perdemos tudo', 0],
-          ['Boa parte se perde', 1],
-          ['Recuperamos com esforço', 2],
-          ['Não — fica tudo registrado na plataforma', 3]
-        ]
       }
     ]
   },
@@ -175,15 +139,6 @@ export const CATS: Category[] = [
     feature: 'ChatBot + Follow-up Automático',
     solution: '<b>Chatbot visual</b> que qualifica sozinho, follow-ups automáticos e campanhas em massa — sua operação vendendo 24h sem esforço.',
     questions: [
-      {
-        q: 'Quantas tarefas repetitivas sua equipe faz manualmente por dia?',
-        o: [
-          ['Quase tudo é manual', 0],
-          ['Muitas', 1],
-          ['Algumas', 2],
-          ['Pouquíssimas — o sistema cuida do repetitivo', 3]
-        ]
-      },
       {
         q: 'Você tem follow-ups automáticos para quem não respondeu?',
         o: [
@@ -210,15 +165,6 @@ export const CATS: Category[] = [
           ['Por uma regra simples', 2],
           ['Distribuição automática e inteligente', 3]
         ]
-      },
-      {
-        q: 'Você consegue disparar campanhas em massa segmentadas?',
-        o: [
-          ['Não consigo', 0],
-          ['Envio manual, um a um', 1],
-          ['Listas de transmissão limitadas', 2],
-          ['Campanhas segmentadas e automáticas', 3]
-        ]
       }
     ]
   },
@@ -238,24 +184,6 @@ export const CATS: Category[] = [
           ['Só uma noção vaga', 1],
           ['Calculo manualmente', 2],
           ['Sim, painel em tempo real por atendente', 3]
-        ]
-      },
-      {
-        q: 'Como identifica quem está sobrecarregado ou ocioso?',
-        o: [
-          ['Não consigo identificar', 0],
-          ['Pelo achismo', 1],
-          ['Perguntando à equipe', 2],
-          ['O painel mostra a carga de cada um', 3]
-        ]
-      },
-      {
-        q: 'Quanto tempo leva para treinar um novo atendente?',
-        o: [
-          ['Semanas, e ainda erra muito', 0],
-          ['Vários dias', 1],
-          ['Alguns dias', 2],
-          ['Horas — o processo é guiado pela plataforma', 3]
         ]
       },
       {
@@ -312,24 +240,6 @@ export const CATS: Category[] = [
           ['Tenho suspeitas', 1],
           ['Sei de alguns', 2],
           ['Sei o ROI exato de cada um', 3]
-        ]
-      },
-      {
-        q: 'Você acompanha o SLA (tempo de resposta e resolução)?',
-        o: [
-          ['Nunca medi', 0],
-          ['De vez em quando', 1],
-          ['Mais ou menos', 2],
-          ['Sim, monitorado automaticamente', 3]
-        ]
-      },
-      {
-        q: 'Em quanto tempo você monta um relatório de desempenho?',
-        o: [
-          ['Levaria dias', 0],
-          ['Algumas horas de trabalho', 1],
-          ['Consigo montar rápido', 2],
-          ['Instantâneo — é só abrir o painel', 3]
         ]
       }
     ]
@@ -489,13 +399,15 @@ export function useDiagnostic() {
   const categoryScores = computed(() => {
     return CATS.map((c, ci) => {
       let pts = 0
-      for (let qi = 0; qi < 5; qi++) {
-        const a = answers.value[ci * 5 + qi]
+      const numQuestions = c.questions.length
+      for (let qi = 0; qi < numQuestions; qi++) {
+        const a = answers.value[ci * numQuestions + qi]
         pts += a ? a.score : 0
       }
+      const maxPts = numQuestions * 3
       return {
         cat: c,
-        pct: Math.round((pts / 15) * 100)
+        pct: Math.round((pts / maxPts) * 100)
       }
     })
   })
