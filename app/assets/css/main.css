@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles that aren't purely tailwind class-based */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #070B14;
+  color: #EAF0FA;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ambient glows */
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-glow::before,
+.bg-glow::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+}
+
+.bg-glow::before {
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, #27468a, transparent 70%);
+  top: -220px;
+  left: -160px;
+}
+
+.bg-glow::after {
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, #1a2e58, transparent 70%);
+  bottom: -200px;
+  right: -140px;
+}
+
+/* Grid lines background decoration */
+.grid-lines {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(75, 127, 255, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(75, 127, 255, 0.04) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000, transparent);
+}

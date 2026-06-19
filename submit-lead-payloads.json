@@ -1,0 +1,170 @@
+{
+  "timestamp": "2026-06-19T03:19:16.936Z",
+  "payload": {
+    "nome": "biel",
+    "empresa": "Legendary",
+    "wpp": "553491557772",
+    "seg": "Serviços / Agência",
+    "funcionarios": "2 a 5 colaboradores",
+    "faturamento": "De R$ 11.000 a R$ 25.000",
+    "whatsapp": "553491557772",
+    "overall": 0,
+    "overallScore": 0,
+    "overall_score": 0,
+    "score": 0,
+    "porcentagem": 0,
+    "percentage": 0,
+    "resultado": 0,
+    "overall_percent": "0%",
+    "porcentagem_percent": "0%",
+    "score_percent": "0%",
+    "overall_str": "0",
+    "porcentagem_str": "0",
+    "score_str": "0",
+    "scores": [
+      {
+        "area": "Atendimento & WhatsApp",
+        "pct": 0
+      },
+      {
+        "area": "Gestão de Leads & Funil",
+        "pct": 0
+      },
+      {
+        "area": "Automação & Processos",
+        "pct": 0
+      },
+      {
+        "area": "Equipe & Produtividade",
+        "pct": 0
+      },
+      {
+        "area": "Dados & Decisão",
+        "pct": 0
+      }
+    ],
+    "date": "2026-06-19T03:19:16.930Z"
+  }
+},
+{
+  "timestamp": "2026-06-19T03:31:53.065Z",
+  "payload": {
+    "nome": "gabriel",
+    "empresa": "forsi",
+    "wpp": "553491557772",
+    "whatsapp": "553491557772",
+    "seg": "Infoproduto / Mentoria",
+    "funcionarios": "6 a 10 colaboradores",
+    "faturamento": "De R$ 26.000 a R$ 40.000",
+    "name": "gabriel",
+    "firstName": "gabriel",
+    "first_name": "gabriel",
+    "company": "forsi",
+    "companyName": "forsi",
+    "company_name": "forsi",
+    "phone": "553491557772",
+    "phone_number": "553491557772",
+    "phoneNumber": "553491557772",
+    "telefone": "553491557772",
+    "segment": "Infoproduto / Mentoria",
+    "employees": "6 a 10 colaboradores",
+    "revenue": "De R$ 26.000 a R$ 40.000",
+    "overall": 39,
+    "overallScore": 39,
+    "overall_score": 39,
+    "score": 39,
+    "porcentagem": 39,
+    "percentage": 39,
+    "resultado": 39,
+    "overall_percent": "39%",
+    "porcentagem_percent": "39%",
+    "score_percent": "39%",
+    "overall_str": "39",
+    "porcentagem_str": "39",
+    "score_str": "39",
+    "scores": [
+      {
+        "area": "Atendimento & WhatsApp",
+        "pct": 80
+      },
+      {
+        "area": "Gestão de Leads & Funil",
+        "pct": 80
+      },
+      {
+        "area": "Automação & Processos",
+        "pct": 0
+      },
+      {
+        "area": "Equipe & Produtividade",
+        "pct": 20
+      },
+      {
+        "area": "Dados & Decisão",
+        "pct": 13
+      }
+    ],
+    "date": "2026-06-19T03:31:53.062Z"
+  }
+},
+{
+  "timestamp": "2026-06-19T03:34:32.458Z",
+  "payload": {
+    "nome": "gabriel p",
+    "empresa": "forsiia",
+    "wpp": "553491557772",
+    "whatsapp": "553491557772",
+    "seg": "Infoproduto / Mentoria",
+    "funcionarios": "11 a 30 colaboradores",
+    "faturamento": "De R$ 40.000 a R$ 70.000",
+    "name": "gabriel p",
+    "firstName": "gabriel p",
+    "first_name": "gabriel p",
+    "company": "forsiia",
+    "companyName": "forsiia",
+    "company_name": "forsiia",
+    "phone": "553491557772",
+    "phone_number": "553491557772",
+    "phoneNumber": "553491557772",
+    "telefone": "553491557772",
+    "segment": "Infoproduto / Mentoria",
+    "employees": "11 a 30 colaboradores",
+    "revenue": "De R$ 40.000 a R$ 70.000",
+    "overall": 35,
+    "overallScore": 35,
+    "overall_score": 35,
+    "score": 35,
+    "porcentagem": 35,
+    "percentage": 35,
+    "resultado": 35,
+    "overall_percent": "35%",
+    "porcentagem_percent": "35%",
+    "score_percent": "35%",
+    "overall_str": "35",
+    "porcentagem_str": "35",
+    "score_str": "35",
+    "scores": [
+      {
+        "area": "Atendimento & WhatsApp",
+        "pct": 27
+      },
+      {
+        "area": "Gestão de Leads & Funil",
+        "pct": 40
+      },
+      {
+        "area": "Automação & Processos",
+        "pct": 80
+      },
+      {
+        "area": "Equipe & Produtividade",
+        "pct": 0
+      },
+      {
+        "area": "Dados & Decisão",
+        "pct": 27
+      }
+    ],
+    "date": "2026-06-19T03:34:32.455Z"
+  }
+},

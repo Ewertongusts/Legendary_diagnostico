@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Atendimento e Vendas · Legendary Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CONFIG — edite aqui (também há um bloco JS de CONFIG abaixo)
+   ============================================================ */
+:root{
+  --bg:#070B14; --bg2:#0A0F1E; --surface:#0F1A2E; --surface2:#13213A;
+  --border:#26324E; --border2:#33425F;
+  --blue:#4B7FFF; --blue-soft:#6E9BFF; --blue-deep:#2B4EAE;
+  --gold:#FFB946; --gold-deep:#D9821A;
+  --green:#22C55E; --green-soft:#34D399;
+  --amber:#F5A524; --red:#FF5C6C;
+  --wpp:#25D366;
+  --text:#EAF0FA; --muted:#8A98B5; --muted2:#5E6C88;
+  --r:18px; --maxw:760px;
+  --shadow:0 18px 50px -12px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  position:relative; overflow-x:hidden;
+}
+/* Ambient glows */
+.bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-glow::before,.bg-glow::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.bg-glow::before{width:620px;height:620px;background:radial-gradient(circle,#27468A,transparent 70%);top:-220px;left:-160px}
+.bg-glow::after{width:560px;height:560px;background:radial-gradient(circle,#1A2E58,transparent 70%);bottom:-200px;right:-140px}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(75,127,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(75,127,255,.04) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(ellipse 80% 60% at 50% 35%,#000,transparent)}
+
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:28px 22px 60px;min-height:100vh;display:flex;flex-direction:column}
+
+/* Brand bar */
+.brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.brand .logo{display:flex;align-items:center;gap:11px;font-family:'Space Grotesk';font-weight:700;font-size:19px;letter-spacing:.5px}
+.brand .fox{width:30px;height:30px;flex:0 0 auto}
+.brand .hub{background:linear-gradient(135deg,#3B6EF6,#5B8CFF);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:1px}
+.brand .tag{font-size:11px;color:var(--muted2);letter-spacing:3px;font-weight:600}
+
+/* Cards / screens */
+.screen{display:none;animation:rise .45s cubic-bezier(.16,.84,.44,1) both}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}*{transition:none!important}}
+
+.card{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ---------- INTRO ---------- */
+.intro{padding:44px 40px 40px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:1.5px;color:var(--blue-soft);
+  background:rgba(75,127,255,.1);border:1px solid rgba(75,127,255,.28);padding:7px 15px;border-radius:30px;margin-bottom:24px;text-transform:uppercase}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,197,94,.18)}
+h1{font-family:'Space Grotesk';font-weight:700;font-size:38px;line-height:1.08;letter-spacing:-.5px;margin-bottom:16px}
+h1 .hl{color:var(--blue-soft)}
+.intro p.sub{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto 30px}
+.intro .meta{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.intro .meta .item{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--muted)}
+.intro .meta .item b{color:var(--text);font-weight:600}
+.intro .meta svg{width:18px;height:18px;color:var(--blue-soft);flex:0 0 auto}
+.cats-preview{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:34px}
+.cats-preview .cp{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center}
+.cats-preview .cp svg{width:22px;height:22px;margin-bottom:7px}
+.cats-preview .cp span{display:block;font-size:10.5px;color:var(--muted);font-weight:500;line-height:1.25}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:'Inter';font-weight:600;font-size:15.5px;
+  border:none;border-radius:13px;padding:16px 30px;cursor:pointer;transition:.18s;text-decoration:none;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#3B6EF6,#5E8BFF);box-shadow:0 12px 28px -8px rgba(59,110,246,.6)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -8px rgba(59,110,246,.75)}
+.btn-wpp{background:linear-gradient(135deg,#1FB855,#25D366);box-shadow:0 12px 28px -8px rgba(37,211,102,.55)}
+.btn-wpp:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--blue-soft)}
+.btn-ghost:hover{border-color:var(--blue);background:rgba(75,127,255,.06)}
+.btn:focus-visible{outline:3px solid var(--blue-soft);outline-offset:3px}
+.btn-lg{width:100%;padding:18px}
+
+/* ---------- PROGRESS FLOW ---------- */
+.flow{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;position:relative;padding:0 6px}
+.flow .track{position:absolute;top:21px;left:30px;right:30px;height:2px;background:var(--border);z-index:0}
+.flow .track .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#3B6EF6,#6E9BFF);box-shadow:0 0 10px rgba(75,127,255,.7);transition:width .5s cubic-bezier(.16,.84,.44,1)}
+.flow .node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;flex:1}
+.flow .bubble{width:42px;height:42px;border-radius:13px;background:var(--surface);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:.35s}
+.flow .bubble svg{width:20px;height:20px;color:var(--muted2);transition:.35s}
+.flow .node.done .bubble{background:rgba(75,127,255,.14);border-color:var(--blue)}
+.flow .node.done .bubble svg{color:var(--blue-soft)}
+.flow .node.current .bubble{background:linear-gradient(135deg,#3B6EF6,#5E8BFF);border-color:var(--blue-soft);box-shadow:0 0 0 5px rgba(75,127,255,.18),0 8px 20px -6px rgba(59,110,246,.7)}
+.flow .node.current .bubble svg{color:#fff}
+.flow .lbl{font-size:9.5px;color:var(--muted2);font-weight:600;text-align:center;letter-spacing:.3px;max-width:74px;line-height:1.2}
+.flow .node.current .lbl,.flow .node.done .lbl{color:var(--muted)}
+
+/* ---------- QUESTION ---------- */
+.q-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.q-cat{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.6px;color:var(--blue-soft);text-transform:uppercase}
+.q-cat svg{width:16px;height:16px}
+.q-count{margin-left:auto;font-size:12.5px;color:var(--muted2);font-weight:600;font-variant-numeric:tabular-nums}
+.q-body{padding:30px 32px 28px}
+.q-text{font-family:'Space Grotesk';font-weight:600;font-size:23px;line-height:1.25;letter-spacing:-.3px;margin:14px 0 22px}
+.options{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:13px;padding:15px 17px;cursor:pointer;transition:.16s;color:var(--text);font-size:15px;font-family:'Inter'}
+.opt:hover{border-color:var(--blue-deep);background:#16243f;transform:translateX(3px)}
+.opt:focus-visible{outline:3px solid var(--blue-soft);outline-offset:2px}
+.opt .key{flex:0 0 auto;width:28px;height:28px;border-radius:8px;background:var(--bg);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);transition:.16s;font-family:'Space Grotesk'}
+.opt:hover .key{border-color:var(--blue);color:var(--blue-soft)}
+.opt.sel{border-color:var(--blue);background:rgba(75,127,255,.12)}
+.opt.sel .key{background:var(--blue);border-color:var(--blue);color:#fff}
+.q-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+.link-back{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:'Inter';font-weight:500;display:inline-flex;align-items:center;gap:6px;padding:8px}
+.link-back:hover{color:var(--text)}
+.link-back:disabled{opacity:.3;cursor:default}
+
+/* ---------- LEAD FORM ---------- */
+.lead{padding:38px 36px}
+.lead h2,.results h2{font-family:'Space Grotesk';font-weight:700;font-size:27px;letter-spacing:-.4px;margin-bottom:8px;text-align:center}
+.lead .sub{color:var(--muted);text-align:center;margin-bottom:26px;font-size:14.5px}
+.lead .ready{display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
+  border-radius:11px;padding:11px;margin-bottom:24px;font-size:13.5px;color:var(--green-soft);font-weight:600}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:7px;letter-spacing:.3px}
+.field input,.field select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:14px 15px;
+  color:var(--text);font-size:15px;font-family:'Inter';transition:.16s}
+.field input::placeholder{color:var(--muted2)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue);background:#0b1322;box-shadow:0 0 0 4px rgba(75,127,255,.12)}
+.field.err input{border-color:var(--red)}
+.field .msg{font-size:11.5px;color:var(--red);margin-top:5px;display:none}
+.field.err .msg{display:block}
+.privacy{font-size:11.5px;color:var(--muted2);text-align:center;margin-top:16px;line-height:1.5}
+
+/* ---------- RESULTS ---------- */
+.results{padding:0}
+.r-hero{text-align:center;padding:36px 32px 28px;border-bottom:1px solid var(--border)}
+.r-hero .rep-label{font-size:11px;letter-spacing:2px;color:var(--muted2);font-weight:600;text-transform:uppercase;margin-bottom:6px}
+.r-hero .company{font-family:'Space Grotesk';font-weight:700;font-size:24px;margin-bottom:22px}
+.gauge-wrap{position:relative;width:210px;height:210px;margin:0 auto 18px}
+.gauge-wrap svg{transform:rotate(-90deg)}
+.gauge-bg{fill:none;stroke:var(--border);stroke-width:14}
+.gauge-fg{fill:none;stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.16,.84,.44,1)}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-center .pct{font-family:'Space Grotesk';font-weight:700;font-size:46px;line-height:1}
+.gauge-center .of{font-size:12px;color:var(--muted2);margin-top:2px}
+.level-badge{display:inline-block;font-family:'Space Grotesk';font-weight:700;font-size:18px;padding:9px 22px;border-radius:30px;margin-top:4px}
+.r-verdict{color:var(--muted);font-size:15px;max-width:540px;margin:16px auto 0;line-height:1.6}
+
+.r-section{padding:30px 32px}
+.r-section h3{font-family:'Space Grotesk';font-weight:600;font-size:16px;letter-spacing:.3px;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+.r-section h3 svg{width:18px;height:18px;color:var(--blue-soft)}
+.r-section .s-sub{font-size:13px;color:var(--muted2);margin-bottom:20px}
+
+.bars{display:flex;flex-direction:column;gap:16px}
+.bar-row .bar-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-row .b-ico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.bar-row .b-ico svg{width:16px;height:16px}
+.bar-row .b-name{font-size:14px;font-weight:600}
+.bar-row .b-pct{margin-left:auto;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-family:'Space Grotesk'}
+.bar-track{height:9px;background:var(--bg);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:6px;width:0;transition:width 1.1s cubic-bezier(.16,.84,.44,1)}
+.bar-tag{font-size:11.5px;color:var(--muted);margin-top:7px}
+
+/* Priority action cards */
+.actions{display:flex;flex-direction:column;gap:13px}
+.act{background:var(--surface2);border:1px solid var(--border);border-left-width:4px;border-radius:13px;padding:18px 19px;position:relative}
+.act .a-top{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.act .a-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.act .a-ico svg{width:18px;height:18px}
+.act .a-cat{font-family:'Space Grotesk';font-weight:600;font-size:15px}
+.act .a-sev{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:4px 9px;border-radius:20px;text-transform:uppercase}
+.act .a-pain{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:12px}
+.act .a-sol{display:flex;gap:10px;align-items:flex-start;background:rgba(75,127,255,.07);border:1px solid rgba(75,127,255,.2);border-radius:10px;padding:11px 13px}
+.act .a-sol svg{width:17px;height:17px;color:var(--blue-soft);flex:0 0 auto;margin-top:1px}
+.act .a-sol .txt{font-size:13px;line-height:1.5}
+.act .a-sol .txt b{color:var(--blue-soft);font-weight:600}
+
+/* Strength note */
+.strength{display:flex;gap:11px;align-items:flex-start;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:12px;padding:15px 17px;margin-top:6px}
+.strength svg{width:19px;height:19px;color:var(--green-soft);flex:0 0 auto;margin-top:1px}
+.strength .txt{font-size:13.5px;line-height:1.55;color:var(--muted)}
+.strength .txt b{color:var(--green-soft);font-weight:600}
+
+/* CTA block */
+.cta-block{margin:6px 32px 34px;background:linear-gradient(135deg,#12203c,#0d1729);border:1px solid var(--border2);border-radius:var(--r);padding:30px 28px;text-align:center;position:relative;overflow:hidden}
+.cta-block::before{content:"";position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(75,127,255,.18),transparent 70%);top:-120px;right:-80px;pointer-events:none}
+.cta-block h3{font-family:'Space Grotesk';font-weight:700;font-size:22px;margin-bottom:10px;position:relative}
+.cta-block p{color:var(--muted);font-size:14.5px;max-width:480px;margin:0 auto 22px;position:relative;line-height:1.6}
+.cta-block .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.cta-savings{display:inline-flex;align-items:center;gap:8px;background:rgba(255,185,70,.12);border:1px solid rgba(255,185,70,.35);
+  color:var(--gold);font-size:13px;font-weight:600;padding:9px 16px;border-radius:30px;margin-bottom:18px;position:relative}
+.r-foot{text-align:center;padding:0 32px 30px;color:var(--muted2);font-size:12.5px}
+.r-foot .restart{background:none;border:none;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:'Inter';font-size:12.5px;margin-top:4px}
+
+@media(max-width:640px){
+  .wrap{padding:20px 15px 50px}
+  h1{font-size:30px}
+  .intro{padding:34px 22px 30px}
+  .q-body,.lead{padding:24px 20px}
+  .cats-preview{grid-template-columns:repeat(3,1fr)}
+  .cats-preview .cp:nth-child(4),.cats-preview .cp:nth-child(5){grid-column:span 1}
+  .flow .lbl{display:none}
+  .intro .meta{gap:16px}
+  .cta-block{margin:6px 15px 30px}
+  .r-section,.r-hero{padding-left:20px;padding-right:20px}
+  .gauge-wrap{width:180px;height:180px}
+}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="grid-lines"></div>
+
+<div class="wrap">
+  <!-- BRAND -->
+  <div class="brand">
+    <div class="logo">
+      <img class="fox" src="data:image/png;base64,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" alt="Legendary Hub">
+      <span>LEGENDARY <span class="hub">HUB</span></span>
+    </div>
+    <span class="tag">DIAGNÓSTICO</span>
+  </div>
+
+  <!-- ============ SCREEN: INTRO ============ -->
+  <section class="screen active" id="s-intro">
+    <div class="card intro">
+      <span class="eyebrow"><span class="dot"></span> Análise gratuita · 3 minutos</span>
+      <h1>Sua operação está <span class="hl">vendendo no máximo</span> do potencial?</h1>
+      <p class="sub">Responda 25 perguntas rápidas sobre seu atendimento e vendas. No final, você recebe um diagnóstico completo com os gargalos que estão custando dinheiro — e o caminho para resolver.</p>
+      <div class="meta">
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> <b>3 min</b> para concluir</div>
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> <b>25</b> perguntas</div>
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Diagnóstico <b>personalizado</b></div>
+      </div>
+      <div class="cats-preview" id="cats-preview"></div>
+      <button class="btn btn-primary btn-lg" onclick="App.start()">Começar diagnóstico
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: QUIZ ============ -->
+  <section class="screen" id="s-quiz">
+    <div class="flow" id="flow"></div>
+    <div class="card">
+      <div class="q-body">
+        <div class="q-head">
+          <span class="q-cat" id="q-cat"></span>
+          <span class="q-count" id="q-count"></span>
+        </div>
+        <div class="q-text" id="q-text"></div>
+        <div class="options" id="q-options"></div>
+        <div class="q-foot">
+          <button class="link-back" id="btn-back" onclick="App.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Voltar
+          </button>
+          <span style="font-size:12px;color:var(--muted2)">Toque numa opção ou use as teclas 1–4</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: LEAD ============ -->
+  <section class="screen" id="s-lead">
+    <div class="card lead">
+      <div class="ready">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Seu diagnóstico está pronto!
+      </div>
+      <h2>Para onde enviamos seu resultado?</h2>
+      <p class="sub">Receba o diagnóstico completo na tela e uma cópia no seu WhatsApp.</p>
+      <div class="field" id="f-nome">
+        <label>Seu nome</label>
+        <input type="text" id="i-nome" placeholder="Como podemos te chamar?" autocomplete="name">
+        <span class="msg">Digite seu nome.</span>
+      </div>
+      <div class="field" id="f-empresa">
+        <label>Nome da empresa</label>
+        <input type="text" id="i-empresa" placeholder="Sua empresa" autocomplete="organization">
+        <span class="msg">Digite o nome da empresa.</span>
+      </div>
+      <div class="field" id="f-wpp">
+        <label>WhatsApp (com DDD)</label>
+        <input type="tel" id="i-wpp" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="numeric">
+        <span class="msg">Digite um WhatsApp válido com DDD.</span>
+      </div>
+      <div class="field">
+        <label>Segmento da empresa</label>
+        <select id="i-seg">
+          <option value="">Selecione…</option>
+          <option>Clínica / Saúde / Estética</option>
+          <option>Imobiliária / Construção</option>
+          <option>E-commerce / Varejo</option>
+          <option>Educação / Cursos</option>
+          <option>Serviços / Agência</option>
+          <option>Indústria / Distribuição (B2B)</option>
+          <option>Infoproduto / Mentoria</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-lg" style="margin-top:8px" onclick="App.submitLead()">
+        Ver meu diagnóstico
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <p class="privacy">🔒 Seus dados estão seguros e não serão compartilhados. Usamos apenas para enviar seu diagnóstico.</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: RESULTS ============ -->
+  <section class="screen" id="s-results">
+    <div class="card results">
+      <div class="r-hero">
+        <div class="rep-label">Diagnóstico de Atendimento &amp; Vendas</div>
+        <div class="company" id="r-company">Sua Empresa</div>
+        <div class="gauge-wrap">
+          <svg width="210" height="210" viewBox="0 0 210 210">
+            <circle class="gauge-bg" cx="105" cy="105" r="90"/>
+            <circle class="gauge-fg" id="gauge-fg" cx="105" cy="105" r="90"/>
+            <defs>
+              <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6EF6"/><stop offset="1" stop-color="#6E9BFF"/></linearGradient>
+            </defs>
+          </svg>
+          <div class="gauge-center"><span class="pct" id="r-pct">0%</span><span class="of">maturidade</span></div>
+        </div>
+        <div><span class="level-badge" id="r-level">—</span></div>
+        <p class="r-verdict" id="r-verdict"></p>
+      </div>
+
+      <div class="r-section">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg> Raio-X por área</h3>
+        <p class="s-sub">Onde sua operação está forte — e onde está perdendo dinheiro.</p>
+        <div class="bars" id="r-bars"></div>
+      </div>
+
+      <div class="r-section" style="padding-top:6px">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg> Plano de ação prioritário</h3>
+        <p class="s-sub">Resolva primeiro o que mais impacta seu faturamento.</p>
+        <div class="actions" id="r-actions"></div>
+        <div id="r-strength"></div>
+      </div>
+
+      <div class="cta-block">
+        <div class="cta-savings" id="r-savings">💸 Você pode estar deixando dinheiro na mesa todo mês</div>
+        <h3 id="r-cta-title">Vamos resolver isso juntos?</h3>
+        <p id="r-cta-text">Agende uma demonstração gratuita e veja, na prática, como a Legendary Hub elimina esses gargalos na sua operação.</p>
+        <div class="ctas">
+          <a class="btn btn-wpp" id="r-wpp" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.738-.981zm5.392-1.592"/></svg>
+            Falar com especialista agora
+          </a>
+          <a class="btn btn-ghost" id="r-site" href="https://legendaryhub.com.br" target="_blank" rel="noopener">Conhecer a plataforma</a>
+        </div>
+      </div>
+
+      <div class="r-foot">
+        Diagnóstico gerado por Legendary Hub · <span id="r-date"></span><br>
+        <button class="restart" onclick="App.restart()">Refazer o diagnóstico</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — EDITE AQUI
+   ============================================================ */
+const CONFIG = {
+  whatsappNumber: "5581981211823",   // número que recebe os leads (só dígitos, com 55)
+  // (opcional) cole uma URL de webhook (Zapier/Make/n8n/Pipedream) p/ capturar leads:
+  leadWebhookUrl: ""                 // ex: "https://hooks.zapier.com/hooks/catch/xxx/yyy"
+};
+
+/* ---------- ÍCONES (categorias) ---------- */
+const IC = {
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  funnel:'<path d="M3 4h18l-7 8v6l-4 2v-8z"/>',
+  bolt:'<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  chart:'<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  spark:'<path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><path d="M5 5l3 3m8 8l3 3M19 5l-3 3M8 16l-3 3"/>',
+  zap:'<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>'
+};
+function svg(p,extra){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '+(extra||'')+'>'+p+'</svg>';}
+
+/* ============================================================
+   QUESTIONÁRIO — 5 categorias × 5 perguntas
+   score: 0 (pior/mais dor) … 3 (mais maduro)
+   ============================================================ */
+const CATS = [
+  {
+    id:'atendimento', name:'Atendimento & WhatsApp', short:'Atendimento', icon:IC.chat, color:'#4B7FFF',
+    feature:'WhatsApp Multiatendente',
+    solution:'Vários atendentes no <b>mesmo número</b>, com histórico unificado e nada se perdendo — o coração da Legendary Hub.',
+    questions:[
+      {q:'Como sua empresa atende os clientes no WhatsApp hoje?',o:[
+        ['WhatsApp comum, no celular de uma pessoa',0],['Vários números/celulares separados',1],['WhatsApp Web compartilhado na equipe',2],['Plataforma com vários atendentes no mesmo número',3]]},
+      {q:'Qual é o tempo médio de resposta a um novo contato?',o:[
+        ['Mais de 1 hora (às vezes só no dia seguinte)',0],['Entre 15 e 60 minutos',1],['Menos de 15 min no horário comercial',2],['Resposta imediata e automática, 24/7',3]]},
+      {q:'Com que frequência mensagens ficam sem resposta ou se perdem?',o:[
+        ['Toda semana perdemos contatos',0],['Acontece com frequência',1],['Raramente',2],['Nunca — todo contato é registrado',3]]},
+      {q:'Vários atendentes conseguem usar o mesmo número ao mesmo tempo?',o:[
+        ['Não, só uma pessoa por vez',0],['Revezamos o mesmo aparelho',1],['Parcialmente, com gambiarras',2],['Sim, simultâneos e com histórico único',3]]},
+      {q:'Você vê todo o histórico de conversa de um cliente em um só lugar?',o:[
+        ['Não, fica espalhado em vários celulares',0],['Só no aparelho de quem atendeu',1],['Em parte',2],['Sim, centralizado e pesquisável',3]]},
+    ]
+  },
+  {
+    id:'leads', name:'Gestão de Leads & Funil', short:'Funil', icon:IC.funnel, color:'#FFB946',
+    feature:'CRM Kanban Visual',
+    solution:'Um <b>funil visual</b> onde cada lead tem um lugar — você enxerga gargalos e nunca mais perde uma venda por esquecimento.',
+    questions:[
+      {q:'Você usa um CRM para organizar leads e clientes?',o:[
+        ['Não, está tudo na cabeça e no WhatsApp',0],['Planilhas de Excel',1],['Um CRM básico, pouco usado',2],['CRM completo usado por toda a equipe',3]]},
+      {q:'Você sabe exatamente em que etapa do funil cada lead está?',o:[
+        ['Não faço ideia',0],['Mais ou menos, de cabeça',1],['Anotado em algum lugar',2],['Sim, num funil visual em tempo real',3]]},
+      {q:'Quantos leads você acredita perder por falta de follow-up?',o:[
+        ['Muitos — a maioria esfria',0],['Uma boa parte',1],['Poucos',2],['Quase nenhum — o follow-up é garantido',3]]},
+      {q:'Você consegue medir sua taxa de conversão (lead → venda)?',o:[
+        ['Não tenho esse número',0],['Estimo por alto',1],['Calculo manualmente às vezes',2],['Acompanho automaticamente em tempo real',3]]},
+      {q:'Quando um vendedor sai, o histórico dos leads dele se perde?',o:[
+        ['Sim, perdemos tudo',0],['Boa parte se perde',1],['Recuperamos com esforço',2],['Não — fica tudo registrado na plataforma',3]]},
+    ]
+  },
+  {
+    id:'automacao', name:'Automação & Processos', short:'Automação', icon:IC.bolt, color:'#34D399',
+    feature:'ChatBot + Follow-up Automático',
+    solution:'<b>Chatbot visual</b> que qualifica sozinho, follow-ups automáticos e campanhas em massa — sua operação vendendo 24h sem esforço.',
+    questions:[
+      {q:'Quantas tarefas repetitivas sua equipe faz manualmente por dia?',o:[
+        ['Quase tudo é manual',0],['Muitas',1],['Algumas',2],['Pouquíssimas — o sistema cuida do repetitivo',3]]},
+      {q:'Você tem follow-ups automáticos para quem não respondeu?',o:[
+        ['Não, depende de alguém lembrar',0],['Às vezes, manualmente',1],['Alguns automáticos básicos',2],['Sim, sequências automáticas completas',3]]},
+      {q:'Você usa chatbot para responder dúvidas frequentes?',o:[
+        ['Não, tudo é humano',0],['Só uma mensagem automática simples',1],['Chatbot básico',2],['Chatbot visual que qualifica e encaminha',3]]},
+      {q:'Como os novos leads são distribuídos entre os atendentes?',o:[
+        ['Quem pega primeiro — desorganizado',0],['Manualmente, por um gestor',1],['Por uma regra simples',2],['Distribuição automática e inteligente',3]]},
+      {q:'Você consegue disparar campanhas em massa segmentadas?',o:[
+        ['Não consigo',0],['Envio manual, um a um',1],['Listas de transmissão limitadas',2],['Campanhas segmentadas e automáticas',3]]},
+    ]
+  },
+  {
+    id:'equipe', name:'Equipe & Produtividade', short:'Equipe', icon:IC.users, color:'#FF8A5C',
+    feature:'Painel de Atendentes',
+    solution:'Um <b>painel ao vivo</b> mostrando a carga de cada atendente, transferências sem perder contexto e a equipe operando 100% na nuvem.',
+    questions:[
+      {q:'Você sabe quantos atendimentos cada pessoa faz por dia?',o:[
+        ['Não tenho ideia',0],['Só uma noção vaga',1],['Calculo manualmente',2],['Sim, painel em tempo real por atendente',3]]},
+      {q:'Como identifica quem está sobrecarregado ou ocioso?',o:[
+        ['Não consigo identificar',0],['Pelo achismo',1],['Perguntando à equipe',2],['O painel mostra a carga de cada um',3]]},
+      {q:'Quanto tempo leva para treinar um novo atendente?',o:[
+        ['Semanas, e ainda erra muito',0],['Vários dias',1],['Alguns dias',2],['Horas — o processo é guiado pela plataforma',3]]},
+      {q:'As conversas são transferidas entre atendentes sem perder o contexto?',o:[
+        ['Não, o cliente repete tudo de novo',0],['Com dificuldade',1],['Em parte',2],['Sim, com histórico completo',3]]},
+      {q:'Sua equipe trabalha de qualquer lugar com a mesma estrutura?',o:[
+        ['Não, depende do aparelho físico',0],['Parcialmente',1],['Com algumas limitações',2],['Sim, 100% na nuvem',3]]},
+    ]
+  },
+  {
+    id:'dados', name:'Dados & Decisão', short:'Dados', icon:IC.chart, color:'#6E9BFF',
+    feature:'Dashboard ao Vivo',
+    solution:'<b>Dashboard em tempo real</b> com SLA, volume e ROI por canal — você decide com dados, não com achismo.',
+    questions:[
+      {q:'Você tem um dashboard com os números da operação em tempo real?',o:[
+        ['Não tenho',0],['Só relatórios manuais esporádicos',1],['Algumas métricas soltas',2],['Dashboard ao vivo completo',3]]},
+      {q:'Suas decisões são baseadas em dados ou em intuição?',o:[
+        ['100% intuição',0],['Mais intuição que dados',1],['Equilibrado',2],['Guiadas por dados',3]]},
+      {q:'Você sabe quais canais/campanhas trazem mais retorno?',o:[
+        ['Não sei',0],['Tenho suspeitas',1],['Sei de alguns',2],['Sei o ROI exato de cada um',3]]},
+      {q:'Você acompanha o SLA (tempo de resposta e resolução)?',o:[
+        ['Nunca medi',0],['De vez em quando',1],['Mais ou menos',2],['Sim, monitorado automaticamente',3]]},
+      {q:'Em quanto tempo você monta um relatório de desempenho?',o:[
+        ['Levaria dias',0],['Algumas horas de trabalho',1],['Consigo montar rápido',2],['Instantâneo — é só abrir o painel',3]]},
+    ]
+  },
+];
+
+/* ---------- Níveis de maturidade ---------- */
+function levelFor(pct){
+  if(pct<=40) return {key:'critico',name:'Estado Crítico',color:'#FF5C6C',bg:'rgba(255,92,108,.15)',
+    verdict:'Sua operação está perdendo vendas e dinheiro todos os dias. O atendimento depende de pessoas e memória, não de processos — e isso trava o crescimento. A boa notícia: os ganhos com a solução certa são enormes e rápidos.'};
+  if(pct<=60) return {key:'risco',name:'Operação em Risco',color:'#F5A524',bg:'rgba(245,165,36,.15)',
+    verdict:'Você já vende, mas há gargalos claros segurando seu faturamento. Leads escapam, processos manuais consomem a equipe e faltam dados para decidir. Com poucos ajustes estruturais, dá para destravar um salto de resultado.'};
+  if(pct<=80) return {key:'evolucao',name:'Operação em Evolução',color:'#4B7FFF',bg:'rgba(75,127,255,.15)',
+    verdict:'Sua base é boa, mas você ainda está deixando dinheiro na mesa. Algumas áreas já rodam bem; outras precisam de automação e visibilidade para você escalar sem aumentar a equipe na mesma proporção.'};
+  return {key:'avancada',name:'Operação Avançada',color:'#34D399',bg:'rgba(52,211,153,.15)',
+    verdict:'Parabéns — sua operação é madura e estruturada. Agora o jogo é refinamento e escala: centralizar tudo numa única plataforma elimina as últimas folgas e multiplica a eficiência do que já funciona.'};
+}
+function bandColor(p){return p<=40?'#FF5C6C':p<=60?'#F5A524':p<=80?'#4B7FFF':'#34D399';}
+function bandTag(p){return p<=40?'Crítico — prioridade máxima':p<=60?'Atenção — gargalo ativo':p<=80?'Bom, dá para melhorar':'Forte';}
+function sevText(p){return p<=40?'Crítico':'Atenção';}
+function sevStyle(p){return p<=40?'background:rgba(255,92,108,.15);color:#FF5C6C':'background:rgba(245,165,36,.15);color:#F5A524';}
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  flat:[], idx:0, answers:[], lead:{},
+  init(){
+    // build flat question list
+    CATS.forEach((c,ci)=>c.questions.forEach((q,qi)=>this.flat.push({ci,qi,cat:c,q})));
+    // intro category preview
+    document.getElementById('cats-preview').innerHTML = CATS.map(c=>
+      '<div class="cp"><div style="color:'+c.color+'">'+svg(c.icon)+'</div><span>'+c.short+'</span></div>').join('');
+    // flow nodes
+    document.getElementById('flow').innerHTML =
+      '<div class="track"><div class="fill" id="flow-fill"></div></div>'+
+      CATS.map((c,i)=>'<div class="node" id="node-'+i+'"><div class="bubble">'+svg(c.icon)+'</div><div class="lbl">'+c.short+'</div></div>').join('');
+    document.getElementById('r-date').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+    document.addEventListener('keydown',e=>{
+      if(document.getElementById('s-quiz').classList.contains('active')){
+        if(['1','2','3','4'].includes(e.key)){const i=+e.key-1;const opts=document.querySelectorAll('#q-options .opt');if(opts[i])opts[i].click();}
+        if(e.key==='Backspace'&&this.idx>0){e.preventDefault();this.back();}
+      }
+    });
+  },
+  show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});},
+  start(){this.idx=0;this.answers=[];this.show('s-quiz');this.render();},
+  render(){
+    const item=this.flat[this.idx];const c=item.cat;
+    document.getElementById('q-cat').innerHTML='<span style="color:'+c.color+'">'+svg(c.icon,'width="16" height="16"')+'</span>'+c.name;
+    document.getElementById('q-count').textContent=(this.idx+1)+' / '+this.flat.length;
+    document.getElementById('q-text').textContent=item.q.q;
+    const sel=this.answers[this.idx];
+    document.getElementById('q-options').innerHTML=item.q.o.map((o,i)=>
+      '<button class="opt'+(sel!==undefined&&sel.i===i?' sel':'')+'" onclick="App.answer('+i+','+o[1]+')"><span class="key">'+(i+1)+'</span>'+o[0]+'</button>').join('');
+    document.getElementById('btn-back').disabled=this.idx===0;
+    // flow state
+    const curCat=item.ci;
+    CATS.forEach((_,i)=>{const n=document.getElementById('node-'+i);n.className='node'+(i<curCat?' done':i===curCat?' current':'');});
+    document.getElementById('flow-fill').style.width=(curCat/(CATS.length-1)*100)+'%';
+  },
+  answer(i,score){
+    this.answers[this.idx]={i,score};
+    document.querySelectorAll('#q-options .opt').forEach((b,bi)=>b.classList.toggle('sel',bi===i));
+    setTimeout(()=>{this.idx<this.flat.length-1?(this.idx++,this.render()):this.show('s-lead');},260);
+  },
+  back(){if(this.idx>0){this.idx--;this.render();}},
+  submitLead(){
+    const nome=document.getElementById('i-nome').value.trim();
+    const empresa=document.getElementById('i-empresa').value.trim();
+    const wpp=document.getElementById('i-wpp').value.trim();
+    const seg=document.getElementById('i-seg').value;
+    let ok=true;
+    const set=(id,bad)=>{document.getElementById(id).classList.toggle('err',bad);if(bad)ok=false;};
+    set('f-nome',!nome); set('f-empresa',!empresa);
+    set('f-wpp',wpp.replace(/\D/g,'').length<10);
+    if(!ok)return;
+    this.lead={nome,empresa,wpp,seg};
+    this.maybeWebhook();
+    this.renderResults();
+    this.show('s-results');
+  },
+  scores(){
+    // per category %
+    return CATS.map((c,ci)=>{
+      let pts=0;for(let qi=0;qi<5;qi++){const a=this.answers[ci*5+qi];pts+=a?a.score:0;}
+      return {cat:c,pct:Math.round(pts/15*100)};
+    });
+  },
+  renderResults(){
+    const sc=this.scores();
+    const overall=Math.round(sc.reduce((s,x)=>s+x.pct,0)/sc.length);
+    const lv=levelFor(overall);
+    document.getElementById('r-company').textContent=this.lead.empresa;
+    // gauge
+    const r=90,circ=2*Math.PI*r;
+    const fg=document.getElementById('gauge-fg');
+    fg.style.stroke=lv.color;fg.style.strokeDasharray=circ;fg.style.strokeDashoffset=circ;
+    setTimeout(()=>{fg.style.strokeDashoffset=circ*(1-overall/100);},200);
+    // animate number
+    let cur=0;const tgt=overall;const t=setInterval(()=>{cur+=Math.ceil((tgt-cur)/6)||1;if(cur>=tgt){cur=tgt;clearInterval(t);}document.getElementById('r-pct').textContent=cur+'%';},45);
+    const lb=document.getElementById('r-level');lb.textContent=lv.name;lb.style.color=lv.color;lb.style.background=lv.bg;
+    document.getElementById('r-verdict').innerHTML='<b style="color:'+lv.color+'">'+this.lead.nome+'</b>, '+lv.verdict;
+    // bars
+    document.getElementById('r-bars').innerHTML=sc.map(x=>{
+      const col=bandColor(x.pct);
+      return '<div class="bar-row"><div class="bar-top"><div class="b-ico" style="background:'+col+'22;color:'+col+'">'+svg(x.cat.icon,'width="16" height="16"')+'</div>'+
+        '<span class="b-name">'+x.cat.name+'</span><span class="b-pct" style="color:'+col+'">'+x.pct+'%</span></div>'+
+        '<div class="bar-track"><div class="bar-fill" data-w="'+x.pct+'" style="background:linear-gradient(90deg,'+col+'99,'+col+')"></div></div>'+
+        '<div class="bar-tag">'+bandTag(x.pct)+'</div></div>';
+    }).join('');
+    setTimeout(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'),350);
+    // actions = categorias < 70%, ordenadas da pior p/ melhor
+    const weak=sc.filter(x=>x.pct<70).sort((a,b)=>a.pct-b.pct);
+    const actEl=document.getElementById('r-actions');
+    if(weak.length===0){
+      actEl.innerHTML='<div class="act" style="border-left-color:#34D399"><div class="a-top"><div class="a-ico" style="background:rgba(52,211,153,.15);color:#34D399">'+svg(IC.check)+'</div><span class="a-cat">Operação afiada</span></div><div class="a-pain">Todas as áreas estão acima de 70%. O próximo passo é unificar tudo em uma só plataforma para eliminar as últimas folgas e escalar com previsibilidade.</div></div>';
+    }else{
+      actEl.innerHTML=weak.map(x=>{
+        const col=bandColor(x.pct);
+        return '<div class="act" style="border-left-color:'+col+'">'+
+          '<div class="a-top"><div class="a-ico" style="background:'+col+'22;color:'+col+'">'+svg(x.cat.icon)+'</div>'+
+          '<span class="a-cat">'+x.cat.name+'</span><span class="a-sev" style="'+sevStyle(x.pct)+'">'+sevText(x.pct)+'</span></div>'+
+          '<div class="a-pain">'+this.painLine(x)+'</div>'+
+          '<div class="a-sol">'+svg(IC.spark,'width="17" height="17"')+'<div class="txt"><b>'+x.cat.feature+':</b> '+x.cat.solution+'</div></div></div>';
+      }).join('');
+    }
+    // strength
+    const strong=sc.filter(x=>x.pct>=70).sort((a,b)=>b.pct-a.pct);
+    document.getElementById('r-strength').innerHTML = strong.length?
+      '<div class="strength">'+svg(IC.check,'width="19" height="19"')+'<div class="txt"><b>Ponto forte:</b> '+strong.map(s=>s.cat.name).join(', ')+'. Mantenha — e integre com as áreas acima para potencializar ainda mais.</div></div>':'';
+    // savings line by level
+    const sav={critico:'🚨 Operações nesse nível costumam perder 30%+ das vendas por falhas de processo',
+      risco:'💸 Cada lead sem follow-up é dinheiro saindo pela porta todo mês',
+      evolucao:'📈 Pequenos ajustes aqui podem destravar um salto de faturamento',
+      avancada:'⚡ Unificar tudo numa plataforma elimina as últimas folgas de eficiência'};
+    document.getElementById('r-savings').textContent=sav[lv.key];
+    // wpp link
+    const msg=this.buildMsg(overall,lv,sc,weak);
+    document.getElementById('r-wpp').href='https://wa.me/'+CONFIG.whatsappNumber+'?text='+encodeURIComponent(msg);
+  },
+  painLine(x){
+    const p=x.pct;
+    const map={
+      atendimento:['Seu atendimento depende de aparelhos e pessoas específicas — mensagens se perdem e clientes esperam demais.','Há furos no atendimento via WhatsApp que estão deixando clientes sem resposta.'],
+      leads:['Sem um funil visual, leads esfriam e vendas são perdidas por puro esquecimento.','Falta visibilidade do funil: você não sabe exatamente onde cada lead está nem por que alguns somem.'],
+      automacao:['Sua equipe gasta horas em tarefas repetitivas que poderiam ser 100% automáticas.','Boa parte do follow-up e da qualificação ainda é manual — e o que é manual é esquecido.'],
+      equipe:['Você não enxerga a carga real da equipe: uns afogados, outros ociosos, e ninguém sabe ao certo.','Falta visibilidade da produtividade — treinar e distribuir trabalho ainda é no improviso.'],
+      dados:['Você decide no escuro: sem dashboard, é difícil saber o que funciona e o que desperdiça verba.','Faltam dados em tempo real para decisões rápidas e para provar o ROI de cada canal.']
+    };
+    return (map[x.cat.id]||['',''])[p<=40?0:1];
+  },
+  buildMsg(overall,lv,sc,weak){
+    let m='Olá! Acabei de fazer o Diagnóstico da Legendary Hub.\n\n';
+    m+='👤 '+this.lead.nome+' — '+this.lead.empresa+(this.lead.seg?' ('+this.lead.seg+')':'')+'\n';
+    m+='📊 Maturidade: '+overall+'% — '+lv.name+'\n\n';
+    m+='Áreas por desempenho:\n';
+    sc.forEach(x=>m+='• '+x.cat.name+': '+x.pct+'%\n');
+    if(weak.length)m+='\nMeus maiores gargalos: '+weak.slice(0,3).map(w=>w.cat.name).join(', ')+'.\n';
+    m+='\nQuero entender como a Legendary Hub pode resolver isso. Podemos conversar?';
+    return m;
+  },
+  maybeWebhook(){
+    if(!CONFIG.leadWebhookUrl)return;
+    try{
+      const sc=this.scores();const overall=Math.round(sc.reduce((s,x)=>s+x.pct,0)/sc.length);
+      fetch(CONFIG.leadWebhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...this.lead,overall,scores:sc.map(x=>({area:x.cat.name,pct:x.pct})),date:new Date().toISOString()})}).catch(()=>{});
+    }catch(e){}
+  },
+  restart(){this.idx=0;this.answers=[];this.lead={};['i-nome','i-empresa','i-wpp'].forEach(id=>document.getElementById(id).value='');document.getElementById('i-seg').value='';this.show('s-intro');}
+};
+App.init();
+</script>
+</body>
+</html>
