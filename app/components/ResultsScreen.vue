@@ -297,7 +297,7 @@ onMounted(() => {
         <BaseButton 
           variant="outline"
           as="a"
-          href="https://legendaryhub.com.br" 
+          href="https://www.legendaryhub.com.br" 
           target="_blank" 
           rel="noopener"
           size="md"
