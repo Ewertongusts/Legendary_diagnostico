@@ -37,7 +37,7 @@ export interface Lead {
 
 // Config variables matching original js
 export const CONFIG = {
-  whatsappNumber: "5581981211823",
+  whatsappNumber: "5534991557772",
   leadWebhookUrl: "https://back4.legendaryhub.com.br/api/webhooks/6ec2ca8a-ad59-43bd-a1b9-0d49930585b1"
 }
 
