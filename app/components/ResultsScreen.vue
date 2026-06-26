@@ -264,22 +264,23 @@ onMounted(() => {
       </p>
       
       <!-- Action CTAs -->
-      <div class="flex gap-[12px] justify-center flex-wrap relative">
+      <div class="flex flex-col items-center gap-[14px] relative">
         <BaseButton 
           variant="primary"
           as="a"
           href="https://cal.com/legendary-hub-gabriel/60min" 
           target="_blank" 
           rel="noopener"
-          size="md"
+          size="lg"
+          class="w-full sm:w-auto min-w-[280px]"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
             <line x1="16" y1="2" x2="16" y2="6"/>
             <line x1="8" y1="2" x2="8" y2="6"/>
             <line x1="3" y1="10" x2="21" y2="10"/>
           </svg>
-          Agendar demonstração agora
+          Agendar com o especialista
         </BaseButton>
         <BaseButton 
           variant="success"
@@ -287,22 +288,12 @@ onMounted(() => {
           :href="whatsappUrl" 
           target="_blank" 
           rel="noopener"
-          size="md"
+          size="sm"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
             <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.738-.981zm5.392-1.592" />
           </svg>
           Falar no WhatsApp
-        </BaseButton>
-        <BaseButton 
-          variant="outline"
-          as="a"
-          href="https://www.legendaryhub.com.br" 
-          target="_blank" 
-          rel="noopener"
-          size="md"
-        >
-          Conhecer a plataforma
         </BaseButton>
       </div>
     </div>

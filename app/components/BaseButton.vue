@@ -3,7 +3,7 @@ import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
   variant?: 'primary' | 'success' | 'outline' | 'text'
-  size?: 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
   type?: 'button' | 'submit'
   disabled?: boolean
   as?: 'button' | 'a'
@@ -34,6 +34,7 @@ const variantClasses = computed(() => {
 
 const sizeClasses = computed(() => {
   if (props.variant === 'text') return ''
+  if (props.size === 'sm') return 'px-[20px] py-[10px]'
   return props.size === 'lg' ? 'px-[30px] py-[16px]' : 'px-6 py-3.5'
 })
 
@@ -41,7 +42,9 @@ const baseClasses = computed(() => {
   if (props.variant === 'text') {
     return 'cursor-pointer font-inter font-medium inline-flex items-center gap-[6px] p-[8px] transition-colors'
   }
-  return 'inline-flex items-center justify-center gap-[10px] font-inter font-semibold text-[15.5px] rounded-[13px] cursor-pointer transition-all duration-180 focus-visible:outline focus-visible:outline-3 focus-visible:outline-brand-blue-soft focus-visible:outline-offset-3 select-none text-decoration-none'
+  const textClass = props.size === 'sm' ? 'text-[13.5px]' : 'text-[15.5px]'
+  const roundClass = props.size === 'sm' ? 'rounded-[10px]' : 'rounded-[13px]'
+  return `inline-flex items-center justify-center gap-[10px] font-inter font-semibold ${textClass} ${roundClass} cursor-pointer transition-all duration-180 focus-visible:outline focus-visible:outline-3 focus-visible:outline-brand-blue-soft focus-visible:outline-offset-3 select-none text-decoration-none`
 })
 </script>
 

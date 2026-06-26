@@ -86,6 +86,7 @@ h1 .hl{color:var(--blue-soft)}
 .btn-ghost:hover{border-color:var(--blue);background:rgba(75,127,255,.06)}
 .btn:focus-visible{outline:3px solid var(--blue-soft);outline-offset:3px}
 .btn-lg{width:100%;padding:18px}
+.btn-sm{padding:10px 20px;font-size:13.5px;border-radius:10px}
 
 /* ---------- PROGRESS FLOW ---------- */
 .flow{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;position:relative;padding:0 6px}
@@ -195,7 +196,7 @@ h1 .hl{color:var(--blue-soft)}
 .cta-block::before{content:"";position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(75,127,255,.18),transparent 70%);top:-120px;right:-80px;pointer-events:none}
 .cta-block h3{font-family:'Space Grotesk';font-weight:700;font-size:22px;margin-bottom:10px;position:relative}
 .cta-block p{color:var(--muted);font-size:14.5px;max-width:480px;margin:0 auto 22px;position:relative;line-height:1.6}
-.cta-block .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.cta-block .ctas{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative}
 .cta-savings{display:inline-flex;align-items:center;gap:8px;background:rgba(255,185,70,.12);border:1px solid rgba(255,185,70,.35);
   color:var(--gold);font-size:13px;font-weight:600;padding:9px 16px;border-radius:30px;margin-bottom:18px;position:relative}
 .r-foot{text-align:center;padding:0 32px 30px;color:var(--muted2);font-size:12.5px}
@@ -353,20 +354,19 @@ h1 .hl{color:var(--blue-soft)}
         <h3 id="r-cta-title">Vamos resolver isso juntos?</h3>
         <p id="r-cta-text">Agende uma demonstração gratuita e veja, na prática, como a Legendary Hub elimina esses gargalos na sua operação.</p>
         <div class="ctas">
-          <a class="btn btn-primary" id="r-cal" href="https://cal.com/legendary-hub-gabriel/60min" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <a class="btn btn-primary" id="r-cal" href="https://cal.com/legendary-hub-gabriel/60min" target="_blank" rel="noopener" style="min-width: 280px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8" y1="2" x2="8" y2="6"/>
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            Agendar demonstração agora
+            Agendar com o especialista
           </a>
-          <a class="btn btn-wpp" id="r-wpp" href="#" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.738-.981zm5.392-1.592"/></svg>
+          <a class="btn btn-wpp btn-sm" id="r-wpp" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.738-.981zm5.392-1.592"/></svg>
             Falar no WhatsApp
           </a>
-          <a class="btn btn-ghost" id="r-site" href="https://www.legendaryhub.com.br" target="_blank" rel="noopener">Conhecer a plataforma</a>
         </div>
       </div>
 
